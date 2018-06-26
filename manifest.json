@@ -1,13 +1,10 @@
 {
-  "name": "Getting Started Example",
+  "name": "Youtube Bookmark Playlister",
   "version": "1.0",
-  "description": "Build an Extension!",
-  "permissions": ["activeTab", "declarativeContent", "storage"],
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "page_action": {
+  "description": "A Chrome extension to turn a folder of bookmarked Youtube links into a proper Youtube playlist.",
+  "permissions": ["bookmarks", "tabs", "storage", "declarativeContent"],
+
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "images/get_started16.png",
