@@ -17,17 +17,40 @@
 document.addEventListener('DOMContentLoaded', documentEvents  , false);
 
 function process_bookmarks(bookmarks) {
-    let folderName = document.getElementById("name_textbox").value.split(/[ ,]+/)
-    for (var i =0; i < bookmarks.length; i++) {
-        var bookmark = bookmarks[i];
-        if (bookmark.url) {
-            console.log("bookmark: "+ bookmark.title + " ~  " + bookmark.url);
+    // Search for bookmark folder that matches name
+    let folderNames = document.getElementById("name_textbox").value.split(/[ ,]+/);
+    matchedFolders = [];
+    bookmarkStack = [bookmarks[0]];
+
+    while (bookmarkStack.length > 0) {
+        var bookmark = bookmarkStack.pop();
+        if (folderNames.indexOf(bookmark.title) > -1) {
+            console.log("matching" + bookmark.title)
+            matchedFolders.push(bookmark);
+            console.log(matchedFolders);
         }
 
-        if (bookmark.children) {
-            process_bookmarks(bookmark.children);
+        else if (bookmark.children && bookmark.children.length > 0) {
+            bookmarkStack.push(...bookmark.children)
         }
     }
+    console.log("MIDWAY")
+    console.log(matchedFolders)
+    console.log("MIDWAY")
+
+    var unlisted = "http://www.youtube.com/watch_videos?video_ids=";
+    while (matchedFolders.length > 0) {
+        var bookmark = matchedFolders.pop();
+        if (bookmark.children && bookmark.children.length > 0) {
+            bookmarkStack.push(...bookmark.children)
+        }
+        else if (bookmark.url.includes("youtube.com/watch")) {
+            console.log("bookmark url" + bookmark.url)
+            re = /(?=youtube\.com\/watch\?v\=)[^\&]*/;
+            unlisted += bookmark.url.match();
+        }
+    }
+    console.log(unlisted);
 }
 
 function myAction(input) { 
@@ -35,7 +58,7 @@ function myAction(input) {
     // do processing with data
     // you need to right click the extension icon and choose "inspect popup"
     // to view the messages appearing on the console.
-    console.log("http://www.youtube.com/watch_videos?video_ids=")
+    console.log("http://www.youtube.com/watch_videos?video_ids=");
     console.log("listing bookmarks: " );
     chrome.bookmarks.getTree( process_bookmarks );
 }
