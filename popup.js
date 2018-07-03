@@ -25,9 +25,9 @@ function process_bookmarks(bookmarks) {
     while (bookmarkStack.length > 0) {
         var bookmark = bookmarkStack.pop();
         if (folderNames.indexOf(bookmark.title) > -1) {
-            console.log("matching" + bookmark.title)
+            console.log("matching")
             matchedFolders.push(bookmark);
-            console.log(matchedFolders);
+            console.log(matchedFolders[0]);
         }
 
         else if (bookmark.children && bookmark.children.length > 0) {
@@ -35,22 +35,23 @@ function process_bookmarks(bookmarks) {
         }
     }
     console.log("MIDWAY")
-    console.log(matchedFolders)
+    console.log(matchedFolders[0])
     console.log("MIDWAY")
 
     var unlisted = "http://www.youtube.com/watch_videos?video_ids=";
     while (matchedFolders.length > 0) {
         var bookmark = matchedFolders.pop();
         if (bookmark.children && bookmark.children.length > 0) {
-            bookmarkStack.push(...bookmark.children)
+            matchedFolders.push(...bookmark.children)
         }
-        else if (bookmark.url.includes("youtube.com/watch")) {
-            console.log("bookmark url" + bookmark.url)
-            re = /(?=youtube\.com\/watch\?v\=)[^\&]*/;
-            unlisted += bookmark.url.match();
+        else if (bookmark.url && bookmark.url.includes("youtube.com/watch")) {
+            console.log("bookmark url: " + bookmark.url)
+            re = /(?<=youtube\.com\/watch.*v\=)[^\&]*/;
+            console.log(bookmark.url.match(re))
+            unlisted += bookmark.url.match(re)[0] + ",";
         }
     }
-    console.log(unlisted);
+    chrome.tabs.create({ url: unlisted });
 }
 
 function myAction(input) { 
