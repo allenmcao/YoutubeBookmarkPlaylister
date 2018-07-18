@@ -23,7 +23,7 @@ function process_bookmarks(bookmarks) {
     bookmarkStack = [bookmarks[0]];
 
     while (bookmarkStack.length > 0) {
-        var bookmark = bookmarkStack.pop();
+        let bookmark = bookmarkStack.pop();
         if (folderNames.indexOf(bookmark.title) > -1) {
             console.log("matching")
             matchedFolders.push(bookmark);
@@ -38,20 +38,35 @@ function process_bookmarks(bookmarks) {
     console.log(matchedFolders[0])
     console.log("MIDWAY")
 
-    var unlisted = "http://www.youtube.com/watch_videos?video_ids=";
+    const playlist_prefix = "http://www.youtube.com/watch_videos?video_ids=";
+    let video_count = 0
+    let playlist_index = 0
+    let playlists = ["http://www.youtube.com/watch_videos?video_ids="]
+
     while (matchedFolders.length > 0) {
         var bookmark = matchedFolders.pop();
         if (bookmark.children && bookmark.children.length > 0) {
             matchedFolders.push(...bookmark.children)
         }
         else if (bookmark.url && bookmark.url.includes("youtube.com/watch")) {
-            console.log("bookmark url: " + bookmark.url)
+            video_count += 1
+            if (video_count >= 51) {
+                playlists[playlist_index] += "&disable_polymer=true"
+                video_count = 1
+                playlist_index += 1
+                playlists[playlist_index] = playlist_prefix
+                console.log("YAY")
+            }
             re = /(?<=youtube\.com\/watch.*v\=)[^\&]*/;
-            console.log(bookmark.url.match(re))
-            unlisted += bookmark.url.match(re)[0] + ",";
+            playlists[playlist_index] += bookmark.url.match(re)[0] + ",";
         }
     }
-    chrome.tabs.create({ url: unlisted });
+    console.log(playlists)
+    for (var i = 0; i < playlists.length; i++) {
+        chrome.tabs.create({ "active": false, url: playlists[i] });
+        // console.log("playlist no: "  + playlists[i])
+    }
+    // chrome.tabs.create({ "active": false, url: playlists[0] })
 }
 
 function myAction(input) { 
