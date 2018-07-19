@@ -14,29 +14,25 @@
 //     });
 // };
 
-document.addEventListener('DOMContentLoaded', documentEvents  , false);
+document.addEventListener('DOMContentLoaded', documentEvents, false);
 
 function process_bookmarks(bookmarks) {
     // Search for bookmark folder that matches name
-    let folderNames = document.getElementById("name_textbox").value.split(/[ ,]+/);
+    const folderNames = document.getElementById("name_textbox").value.split(/[ ,]+/);
+    const excess = document.getElementById("excess").checked
     matchedFolders = [];
     bookmarkStack = [bookmarks[0]];
 
     while (bookmarkStack.length > 0) {
         let bookmark = bookmarkStack.pop();
         if (folderNames.indexOf(bookmark.title) > -1) {
-            console.log("matching")
             matchedFolders.push(bookmark);
-            console.log(matchedFolders[0]);
         }
 
         else if (bookmark.children && bookmark.children.length > 0) {
             bookmarkStack.push(...bookmark.children)
         }
     }
-    console.log("MIDWAY")
-    console.log(matchedFolders[0])
-    console.log("MIDWAY")
 
     const playlist_prefix = "http://www.youtube.com/watch_videos?video_ids=";
     let video_count = 0
@@ -62,20 +58,15 @@ function process_bookmarks(bookmarks) {
         }
     }
     console.log(playlists)
-    for (var i = 0; i < playlists.length; i++) {
+    for (var i = playlists.length - 1; i >= 0; i--) {
         chrome.tabs.create({ "active": false, url: playlists[i] });
-        // console.log("playlist no: "  + playlists[i])
     }
-    // chrome.tabs.create({ "active": false, url: playlists[0] })
 }
 
 function myAction(input) { 
-    console.log("input value is : " + input.value);
     // do processing with data
     // you need to right click the extension icon and choose "inspect popup"
     // to view the messages appearing on the console.
-    console.log("http://www.youtube.com/watch_videos?video_ids=");
-    console.log("listing bookmarks: " );
     chrome.bookmarks.getTree( process_bookmarks );
 }
 
