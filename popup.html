@@ -1,19 +1,16 @@
 <!DOCTYPE html>
   <html>
     <head>
-      <style>
-        button {
-          height: 30px;
-          width: 30px;
-          outline: none;
-        }
-      </style>
+      <link rel="stylesheet" href="popup.css"></script>
     </head>
     <body>
-      <div style="padding: 20px 20px 20px 20px;">
-        <h3>Hello,</h3>
-        <p>Please enter the name of the folder you want playlisted: </p>
+      <span id="appname">
+        <span>Youtube Bookmark Playlister</span>
+      </span>
+      <div>
+        <p>Enter the folder name you want playlisted: </p>
         <input id="name_textbox" />
+        <br/>
         <input id="excess" name="excess" type="checkbox"/>
         <label for="excess">Open Links 50+ Beyond in Separate Tabs</label>
         <br/>

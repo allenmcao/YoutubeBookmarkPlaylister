@@ -40,7 +40,7 @@ function process_bookmarks(bookmarks) {
     let playlists = ["http://www.youtube.com/watch_videos?video_ids="]
 
     while (matchedFolders.length > 0) {
-        var bookmark = matchedFolders.pop();
+        let bookmark = matchedFolders.pop();
         if (bookmark.children && bookmark.children.length > 0) {
             matchedFolders.push(...bookmark.children)
         }
@@ -51,15 +51,17 @@ function process_bookmarks(bookmarks) {
                 video_count = 1
                 playlist_index += 1
                 playlists[playlist_index] = playlist_prefix
-                console.log("YAY")
             }
-            re = /(?<=youtube\.com\/watch.*v\=)[^\&]*/;
+            const re = /(?<=youtube\.com\/watch.*v\=)[^\&]*/;
             playlists[playlist_index] += bookmark.url.match(re)[0] + ",";
         }
     }
-    console.log(playlists)
-    for (var i = playlists.length - 1; i >= 0; i--) {
-        chrome.tabs.create({ "active": false, url: playlists[i] });
+    if (excess) {
+        for (var i = playlists.length - 1; i >= 0; i--) {
+            chrome.tabs.create({ "active": false, url: playlists[i] });
+        }
+    } else {
+        chrome.tabs.create({"active": false, url: playlists[0]})
     }
 }
 
